@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark;
+}
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+
+
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-primary: #FEBC00;
+  --color-secondary: #2C9CE5;
+}
+
+.btnStyle {
+  width: 100%;
+  
+  color: black;
+  font-size: 0.875rem; /* text-sm */
+  padding: 0.5rem 0; /* py-2 */
+  border-radius: 1.5rem; /* rounded-3xl */
+  font-weight: bold;
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+
+.text1{
+color: #FEBC00;
+}
+.text2{
+ color: #2C9CE5;
+}
+
+
