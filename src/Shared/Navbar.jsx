@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router";
+import { Link, NavLink } from "react-router";
 import { FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -90,11 +90,13 @@ const Navbar = () => {
 
         {/* Login/Register */}
         <div>
+         <Link to={'/login'}>
           <button className="bg-[#FEBC00] py-1 px-5 rounded-2xl font-bold text-black cursor-pointer
              transition-all duration-300 ease-in-out
              hover:bg-[#ffdf89]">
             Login/Register
           </button>
+         </Link>
         </div>
       </div>
 
