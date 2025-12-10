@@ -40,7 +40,7 @@ const Navbar = () => {
     if (!currentUser) return;
     if (currentUser.role === "admin") navigate("/dashboard/admin");
     else if (currentUser.role === "vendor") navigate("/dashboard/vendor");
-    else navigate("/dashboard/user");
+    else navigate("/dashboard/user/home");
   };
 
   // Theme switcher

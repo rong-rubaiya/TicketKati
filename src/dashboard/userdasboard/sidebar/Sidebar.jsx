@@ -15,7 +15,7 @@ const Sidebar = ({ currentUser, handleLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const links = [
-    { path: "/dashboard/user", label: "Dashboard Home", icon: <FiHome /> },
+    { path: "/dashboard/user/home", label: "Dashboard Home", icon: <FiHome /> },
     { path: "/dashboard/user/profile", label: "User Profile", icon: <FiUser /> },
     {
       path: "/dashboard/user/booked-tickets",
@@ -32,30 +32,30 @@ const Sidebar = ({ currentUser, handleLogout }) => {
 
   return (
     <>
-      {/* Mobile Floating Button */}
+      {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden fixed   z-50 bg-[#FEBC00] dark:bg-[#2C9CE5] p-3 rounded-xl shadow-lg"
+        className="md:hidden fixed z-50 bg-[#FEBC00] dark:bg-[#2C9CE5] p-3 mt-24 rounded-xl shadow-lg transition-all"
       >
         {isOpen ? <FiX size={22} /> : <FiMenu size={22} />}
       </button>
 
-      {/* Sidebar Box */}
+      {/* Sidebar */}
       <aside
         className={`
-          top-0 pt-6 pb-15 left-0 w-64 bg-white dark:bg-[#00114b] shadow-xl border-r border-gray-300 dark:border-gray-700
-          transform transition-transform duration-300
+          fixed md:static top-0 left-0 h-full w-64 bg-white dark:bg-[#00114b] shadow-xl border-r border-gray-300 dark:border-gray-700
+          transform transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
           z-40
         `}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full pt-20">
           {/* Logo */}
           <div className="p-6 text-2xl font-extrabold tracking-wider text-[#ff9900] dark:text-[#FEBC00]">
             TicketKati
           </div>
 
-          {/* MENU LIST */}
+          {/* Menu Links */}
           <ul className="flex-1 px-4 flex flex-col gap-2">
             {links.map((link, idx) => (
               <NavLink
@@ -77,7 +77,7 @@ const Sidebar = ({ currentUser, handleLogout }) => {
             ))}
           </ul>
 
-          {/* Logout */}
+          {/* Logout Button */}
           {currentUser && (
             <div className="p-4">
               <button
@@ -91,15 +91,16 @@ const Sidebar = ({ currentUser, handleLogout }) => {
         </div>
       </aside>
 
-      {/* Backdrop (mobile only) */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-30 md:hidden"
-          onClick={() => setIsOpen(false)}
-        ></div>
-      )}
+      {/* Backdrop for Mobile */}
+      <div
+        className={`
+          fixed inset-0 bg-black/70 z-30 md:hidden transition-opacity duration-300
+          ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}
+        `}
+        onClick={() => setIsOpen(false)}
+      ></div>
 
-      {/* MAIN CONTENT PUSH — prevents footer overlap */}
+      {/* Push content for sidebar */}
       <div className="md:ml-64"></div>
     </>
   );

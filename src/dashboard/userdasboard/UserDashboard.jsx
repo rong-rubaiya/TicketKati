@@ -1,20 +1,27 @@
 import React from "react";
 import Sidebar from "./sidebar/Sidebar";
+import Rightbar from "./userrouter/Rightbar";
+import { Outlet } from "react-router";
+import Footer from "../../Shared/Footer";
 
 const UserDashboard = () => {
   return (
-    <div className="flex pt-22">
-      {/* Sidebar */}
-      <Sidebar />
+    <div className="" >
+<div className=" flex ">
+  
+      
+        <div className=" flex-1">
+          <Sidebar/>
+        </div>
+        <div className="md:flex-4 mr-0  sm:mr-30 md:mr-0 mt-20">
+         <Outlet/>
+        </div>
 
-      {/* Main content area */}
-      <div className="flex-1 md:ml-64 p-6 ">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-          Welcome to User Dashboard
-        </h2>
+        
+      
 
-        {/* Your content will go here */}
-      </div>
+</div>
+
     </div>
   );
 };
