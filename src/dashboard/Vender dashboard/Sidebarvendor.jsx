@@ -1,0 +1,103 @@
+import React, { useState } from "react";
+import { NavLink } from "react-router";
+import {
+  FiUser,
+  FiPlusSquare,
+  FiList,
+  FiInbox,
+  FiBarChart2,
+  FiLogOut,
+  FiMenu,
+  FiX,
+} from "react-icons/fi";
+
+const Sidebarvendor = ({ currentUser, handleLogout }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const links = [
+    { path: "/dashboard/vendor/profile", label: "Vendor Profile", icon: <FiUser /> },
+    { path: "/dashboard/vendor/add-ticket", label: "Add Ticket", icon: <FiPlusSquare /> },
+    { path: "/dashboard/vendor/my-tickets", label: "My Added Tickets", icon: <FiList /> },
+    { path: "/dashboard/vendor/requests", label: "Requested Bookings", icon: <FiInbox /> },
+    { path: "/dashboard/vendor/revenue", label: "Revenue Overview", icon: <FiBarChart2 /> },
+  ];
+
+  return (
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="md:hidden fixed z-50 bg-[#FEBC00] dark:bg-[#2C9CE5] p-3 mt-24 rounded-xl shadow-lg"
+      >
+        {isOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+      </button>
+
+      {/* Sidebar */}
+      <aside
+        className={`
+          fixed md:static top-0 left-0 h-full w-64 
+          bg-white dark:bg-[#00114b]
+          shadow-xl border-r border-gray-300 dark:border-gray-700
+          transform transition-transform duration-300 ease-in-out
+          ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+          z-40
+        `}
+      >
+        <div className="flex flex-col h-full pt-20">
+          {/* Logo */}
+          <div className="p-6 text-2xl font-extrabold tracking-wider text-[#ff9900] dark:text-[#FEBC00]">
+            Vendor Panel
+          </div>
+
+          {/* Menu Links */}
+          <ul className="flex-1 px-4 flex flex-col gap-2">
+            {links.map((link, idx) => (
+              <NavLink
+                key={idx}
+                to={link.path}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 p-3 rounded-xl text-[15px] font-semibold transition-all
+                  ${
+                    isActive
+                      ? "bg-[#FEBC00]/30 dark:bg-[#2C9CE5]/40 text-[#ff9900] dark:text-white"
+                      : "text-gray-700 dark:text-gray-200 hover:bg-[#ffdf89]/40 dark:hover:bg-[#2C9CE5]/20"
+                  }`
+                }
+                onClick={() => setIsOpen(false)}
+              >
+                <span className="text-xl">{link.icon}</span>
+                {link.label}
+              </NavLink>
+            ))}
+          </ul>
+
+          {/* Logout */}
+          {currentUser && (
+            <div className="p-4">
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 bg-red-500 text-white p-3 rounded-xl font-bold hover:bg-red-600 transition-all"
+              >
+                <FiLogOut className="text-lg" /> Logout
+              </button>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      {/* Backdrop */}
+      <div
+        className={`
+          fixed inset-0 bg-black/70 z-30 md:hidden transition-opacity duration-300
+          ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}
+        `}
+        onClick={() => setIsOpen(false)}
+      ></div>
+
+      {/* Content Push */}
+      <div className="md:ml-64"></div>
+    </>
+  );
+};
+
+export default Sidebarvendor;

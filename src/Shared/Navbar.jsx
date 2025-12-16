@@ -13,7 +13,7 @@ const Navbar = () => {
   const links = [
     { path: "/", label: "Home" },
     { path: "/tickets", label: "All Tickets" },
-    { path: "/my-booking", label: "My Booking" },
+    
     { path: "/reviews", label: "Reviews" },
     { path: "/about", label: "About" },
     { path: "/contact", label: "Contact" },
@@ -38,8 +38,8 @@ const Navbar = () => {
 
   const goToDashboard = () => {
     if (!currentUser) return;
-    if (currentUser.role === "admin") navigate("/dashboard/admin");
-    else if (currentUser.role === "vendor") navigate("/dashboard/vendor");
+    if (currentUser.role === "admin") navigate("/dashboard/admin/profile");
+    else if (currentUser.role === "vendor") navigate("/dashboard/vendor/profile");
     else navigate("/dashboard/user/home");
   };
 

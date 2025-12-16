@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
-  const { signInUser, resetPassword,user,setUser } = useContext(AuthContext);
+  const { signInUser, resetPassword,user, setUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -19,17 +19,17 @@ const Login = () => {
     const adminPassword = import.meta.env.VITE_APP_ADMIN_PASSWORD;
     const adminName = import.meta.env.VITE_APP_ADMIN_NAME;
    if(email === adminEmail && password === adminPassword){
-        const adminUser = {
-        uid: "admin-uid",
-        email: adminEmail,
-        displayName: adminName,
-        role: "admin",
-      };
-      localStorage.setItem("user", JSON.stringify(adminUser));
-      setUser(adminUser);
-      navigate("/");
-      return;
-    }
+  const adminUser = {
+    uid: "admin-uid",
+    email: adminEmail,
+    displayName: adminName,
+    role: "admin",
+  };
+  localStorage.setItem("user", JSON.stringify(adminUser));
+  setUser(adminUser);  // ✅ This works now with correct useContext
+  navigate("/dashboard/admin/profile");
+  return;
+}
    
    else{
      try {

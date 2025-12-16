@@ -13,7 +13,7 @@ const UserDashboard = () => {
         <div className=" flex-1">
           <Sidebar/>
         </div>
-        <div className="md:flex-4 mr-0  sm:mr-30 md:mr-0 mt-20">
+        <div className="md:flex-4  w-11/12 mx-auto mt-20">
          <Outlet/>
         </div>
 

@@ -17,7 +17,11 @@ const googleProvider = new GoogleAuthProvider();
 const fbProvider = new FacebookAuthProvider();
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
   const [loading, setLoading] = useState(true);
 
   // Extra profile info (optional)
@@ -25,6 +29,8 @@ const AuthProvider = ({ children }) => {
     const saved = localStorage.getItem("extraProfile");
     return saved ? JSON.parse(saved) : {};
   });
+
+  
 
   const updateExtraProfile = (data) => {
     const updated = { ...extraProfile, ...data };
@@ -132,32 +138,41 @@ const AuthProvider = ({ children }) => {
 
   // Listen to auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        try {
-          const roleRes = await fetch(`http://localhost:5000/user-role/${currentUser.email}`);
-          const roleData = await roleRes.json();
+  // Check localStorage first
+  const savedUser = localStorage.getItem("user");
+  if (savedUser) {
+    setUser(JSON.parse(savedUser));
+    setLoading(false);
+    return;
+  }
 
-          setUser({
-            uid: currentUser.uid,
-            email: currentUser.email,
-            displayName: currentUser.displayName,
-            photoURL: currentUser.photoURL,
-            role: roleData.role,
-            ...extraProfile
-          });
-        } catch (err) {
-          console.error("Failed to fetch user role:", err);
-          setUser({ ...currentUser, role: "user" }); // fallback
-        }
-      } else {
-        setUser(null);
+  // Then check Firebase auth state
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    if (currentUser) {
+      try {
+        const roleRes = await fetch(`http://localhost:5000/user-role/${currentUser.email}`);
+        const roleData = await roleRes.json();
+
+        setUser({
+          uid: currentUser.uid,
+          email: currentUser.email,
+          displayName: currentUser.displayName,
+          photoURL: currentUser.photoURL,
+          role: roleData.role,
+          ...extraProfile
+        });
+      } catch (err) {
+        console.error("Failed to fetch user role:", err);
+        setUser({ ...currentUser, role: "user" }); // fallback
       }
-      setLoading(false);
-    });
+    } else {
+      setUser(null);
+    }
+    setLoading(false);
+  });
 
-    return () => unsubscribe();
-  }, [extraProfile]);
+  return () => unsubscribe();
+}, [extraProfile]);
 
   const authInfo = {
     createUser,
@@ -169,7 +184,8 @@ const AuthProvider = ({ children }) => {
     signOutUser,
     updateExtraProfile,
     user,
-    loading
+    loading,
+    setUser
   };
 
   return (
