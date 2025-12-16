@@ -25,6 +25,12 @@ import AdvertiseTickets from "../dashboard/Admin dashboard/route/AdvertiseTicket
 import AllTickets from "../Pages/AllTickets";
 import Review from "../Pages/Review";
 import About from "../Pages/About";
+import Contact from "../Pages/Contact";
+import Faq from "../Pages/Faq";
+import Blog from "../Pages/Blog";
+import Chat from "../Pages/Chat";
+import Subscription from "../Pages/Subscription";
+import Terms from "../Pages/Terms";
 
 export const router= createBrowserRouter([
   {
@@ -128,6 +134,25 @@ export const router= createBrowserRouter([
     },{
       path:'/about',
       element:<About></About>
+    },{
+      path:"/contact",
+      element:<Contact/>
+    },{
+      path:'/faq',
+      element:<Faq/>
+    },{
+      path:'/blog',
+      element:<Blog/>
+    },{
+      path:'/chat',
+      element:<Chat/>
+    },
+    {
+      path:'/subscription',
+      element:<Subscription/>
+    },{
+      path:'/terms',
+      element:<Terms/>
     }
   ]
     

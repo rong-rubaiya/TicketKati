@@ -13,11 +13,15 @@ const Navbar = () => {
   const links = [
     { path: "/", label: "Home" },
     { path: "/tickets", label: "All Tickets" },
-    
+    {path:'/chat',label:"Chat"},
     { path: "/reviews", label: "Reviews" },
     { path: "/about", label: "About" },
     { path: "/contact", label: "Contact" },
+    
+    {path:"/subscription", label:"Subscription"},
+    {path:"/terms", label:"Terms & Conditions"},
     { path: "/faq", label: "FAQ" },
+    { path: "/blog", label: "Blog" },
   ];
 
   // Load user from context or localStorage
@@ -53,8 +57,13 @@ const Navbar = () => {
     <nav className="bg-white dark:bg-[#000000] w-full shadow-gray-200 dark:shadow-black shadow-sm transition-colors duration-500 fixed z-50">
       <div className="w-11/12 mx-auto flex items-center justify-between py-2 relative">
         {/* Logo */}
-        <div className="font-bold text-xl tracking-wider cursor-pointer text-[#ff9900] dark:text-[#2C9CE5]">
-          TicketKati
+        <div className="font-bold text-xl tracking-wider cursor-pointer text-[#ff9900] dark:text-[#2C9CE5] flex  gap-6">
+          <h1>TicketKati</h1>
+          {currentUser?(<img 
+    src={currentUser.photoURL || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6Qv5s5REahX2Vcj11jPnU1ibiEUfTc-VMAQ&s"}
+    alt={currentUser.displayName || "User"}
+    className="w-10 h-10 rounded-full border-2 object-cover border-[#FEBC00] dark:border-[#2C9CE5] block sm:hidden"
+  />):<p></p>}
         </div>
 
         {/* Desktop Links */}
@@ -116,9 +125,25 @@ const Navbar = () => {
   {currentUser ? (
     <div className="flex items-center gap-2">
       {/* User Name */}
-      <span className="font-semibold text-gray-700 dark:text-gray-200">
-        {currentUser.displayName || currentUser.email}
-      </span>
+      <div className="hidden sm:flex items-center gap-3 px-4   ">
+  {/* User Avatar */}
+  <img 
+    src={currentUser.photoURL || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6Qv5s5REahX2Vcj11jPnU1ibiEUfTc-VMAQ&s"}
+    alt={currentUser.displayName || "User"}
+    className="w-10 h-10 rounded-full border-2 object-cover border-[#FEBC00] dark:border-[#2C9CE5]"
+  />
+
+  {/* User Name / Email */}
+  <div className="flex flex-col">
+    <span className="font-semibold  text-gray-900 dark:text-gray-100">
+      {currentUser.displayName || "Anonymous"}
+    </span>
+    <span className="text-sm text-gray-500  dark:text-gray-300 truncate">
+      {currentUser.email}
+    </span>
+  </div>
+</div>
+
 
       <button
         onClick={goToDashboard}

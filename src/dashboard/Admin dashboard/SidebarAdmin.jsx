@@ -31,7 +31,7 @@ const SidebarAdmin = () => {
 
       {/* Sidebar */}
       <aside
-        className={`
+        className={` overflow-y-auto 
           fixed md:static top-0 left-0 h-full w-64 bg-white dark:bg-[#00114b] shadow-xl border-r border-gray-300 dark:border-gray-700
           transform transition-transform duration-300 ease-in-out
           ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}

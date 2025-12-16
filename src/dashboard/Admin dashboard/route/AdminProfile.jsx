@@ -19,7 +19,7 @@ const AdminProfile = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-center gap-6 mb-8">
         <img
-          src={user.photoURL || "https://via.placeholder.com/150"}
+          src={user.photoURL || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6Qv5s5REahX2Vcj11jPnU1ibiEUfTc-VMAQ&s"}
           alt={user.displayName}
           className="w-32 h-32 rounded-full border-4 border-[#FEBC00] dark:border-[#2C9CE5] object-cover"
         />

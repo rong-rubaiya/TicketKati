@@ -1,10 +1,14 @@
 import React from "react";
 import { FaFacebookF, FaStripe } from "react-icons/fa";
 
+
+
 const Footer = () => {
   return (
     <footer className="bg-[#ff9900] dark:bg-[#080808] text-black dark:text-white relative overflow-hidden">
+      
       <div className="w-11/12 mx-auto py-16 grid md:grid-cols-4 gap-10">
+      
         {/* Column 1: Logo + Description */}
         <div>
           <div className="flex items-center gap-3 mb-4">
@@ -52,6 +56,7 @@ const Footer = () => {
       <div className="w-11/12 mx-auto border-t border-black/20 dark:border-white/20 pt-4 text-center text-sm md:text-base">
         © 2025 TicketKati. All rights reserved.
       </div>
+      
     </footer>
   );
 };

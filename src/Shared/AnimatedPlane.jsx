@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import plane from "../../assets/airplane.png";
+import plane from "../../src/assets/airplane.png";
 
 const AnimatedPlane = () => {
   return (
@@ -21,7 +21,7 @@ const AnimatedPlane = () => {
           rotate: -10
         }}
         transition={{
-          duration: 8,
+          duration: 20,
           ease: "easeInOut",
           repeat: Infinity,
           repeatDelay: 0.1, // Small pause before restarting
