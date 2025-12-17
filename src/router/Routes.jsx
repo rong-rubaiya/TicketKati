@@ -126,7 +126,7 @@ export const router= createBrowserRouter([
       element:<Register/>
     },{
       path:'/tickets',
-      element:<AllTickets></AllTickets>
+      element:<PrivateRoute><AllTickets></AllTickets></PrivateRoute>
     },
     {
       path:'/reviews',

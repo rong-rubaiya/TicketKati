@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
 import { FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
@@ -6,7 +6,8 @@ import { AuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, signOutUser } = useContext(AuthContext);
+  const { user, signOutUser } = use(AuthContext)
+
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
