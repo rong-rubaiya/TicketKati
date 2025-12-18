@@ -31,6 +31,7 @@ import Blog from "../Pages/Blog";
 import Chat from "../Pages/Chat";
 import Subscription from "../Pages/Subscription";
 import Terms from "../Pages/Terms";
+import SingleTickets from "../Pages/SingleTickets";
 
 export const router= createBrowserRouter([
   {
@@ -127,6 +128,11 @@ export const router= createBrowserRouter([
     },{
       path:'/tickets',
       element:<PrivateRoute><AllTickets></AllTickets></PrivateRoute>
+    },
+    {
+      path:'/ticket/:id',
+      element:<PrivateRoute><SingleTickets></SingleTickets></PrivateRoute>,
+     
     },
     {
       path:'/reviews',

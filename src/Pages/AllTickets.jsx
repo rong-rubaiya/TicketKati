@@ -19,6 +19,7 @@ const AllTickets = () => {
       .then(data => {
         setTickets(data.filter(ticket => ticket.approved === true));
         setLoading(false);
+        console.log(data)
       })
       .catch(err => {
         console.error("Fetch error:", err);
@@ -44,7 +45,7 @@ const AllTickets = () => {
         {tickets.map(ticket => (
           <div key={ticket._id} className="rounded-2xl shadow bg-white">
             <img
-              src={`${backendURL}${ticket.image}`}
+               src={ticket.image || "/images/placeholder.jpg"}
               className="h-40 w-full object-cover"
             />
 
@@ -54,7 +55,7 @@ const AllTickets = () => {
               <p>Transport: {ticket.transportType}</p>
               <p>Price: ৳{ticket.price}</p>
 
-             <Link to={`/ticket-details/${ticket._id}`}>
+             <Link to={`/ticket/${ticket._id}`}>
   <button className="mt-4 w-full bg-yellow-400 py-2 rounded-xl">
     See Details
   </button>
