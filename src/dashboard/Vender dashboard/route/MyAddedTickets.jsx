@@ -1,14 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/AuthContext";
+import { useNavigate } from "react-router";
+import Swal from "sweetalert2";
 
 const MyAddedTickets = () => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [tickets, setTickets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const ticketsPerPage = 3;
 
   const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
 
+  // Fetch vendor tickets
   useEffect(() => {
     if (!user?.email) return;
 
@@ -43,13 +47,61 @@ const MyAddedTickets = () => {
     }
   };
 
+  // Navigate to Add Ticket form with ticket data for update
+ const handleUpdate = (ticket) => {
+  // Navigate to your Add Ticket form route (relative path)
+  // and pass the ticket data via state
+  navigate("/dashboard/vendor/add-ticket", { state: { ticket } });
+};
+
+  // Delete ticket from backend and frontend
+ const handleDelete = async (ticketId) => {
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it!",
+    cancelButtonText: "Cancel",
+  });
+
+  if (result.isConfirmed) {
+    try {
+      const res = await fetch(`${backendURL}/tickets/${ticketId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete ticket");
+
+      // Update frontend state
+      setTickets(prev => prev.filter(t => t._id !== ticketId));
+
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Your ticket has been deleted.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to delete the ticket.",
+      });
+    }
+  }
+};
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
         My Added Tickets
       </h1>
 
-      {/* Grid */}
+      {/* Tickets Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {currentTickets.map(ticket => (
           <div
@@ -82,9 +134,9 @@ const MyAddedTickets = () => {
             {/* Buttons */}
             <div className="flex gap-3 mt-4">
               <button
+                onClick={() => handleUpdate(ticket)}
                 disabled={ticket.verificationStatus === "rejected"}
-                className={`flex-1 py-2 rounded-lg font-semibold transition
-                ${
+                className={`flex-1 py-2 rounded-lg font-semibold transition ${
                   ticket.verificationStatus === "rejected"
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-[#2C9CE5] text-white hover:bg-[#2486c7]"
@@ -94,9 +146,9 @@ const MyAddedTickets = () => {
               </button>
 
               <button
+                onClick={() => handleDelete(ticket._id)}
                 disabled={ticket.verificationStatus === "rejected"}
-                className={`flex-1 py-2 rounded-lg font-semibold transition
-                ${
+                className={`flex-1 py-2 rounded-lg font-semibold transition ${
                   ticket.verificationStatus === "rejected"
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-red-500 text-white hover:bg-red-600"
