@@ -16,19 +16,19 @@ const SingleTickets = () => {
 
   // Fetch ticket data
   useEffect(() => {
-    fetch(`${backendURL}/ticket/${id}`)
-      .then(async (res) => {
-        if (!res.ok) throw new Error(await res.text());
-        return res.json();
-      })
-      .then((data) => {
+    const fetchTicket = async () => {
+      try {
+        const res = await fetch(`${backendURL}/ticket/${id}`);
+        if (!res.ok) throw new Error("Ticket not found");
+        const data = await res.json();
         setTicket(data.result || data); // support both structures
         setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error(err);
         setLoading(false);
-      });
+      }
+    };
+    fetchTicket();
   }, [backendURL, id]);
 
   // Countdown timer
@@ -62,11 +62,14 @@ const SingleTickets = () => {
         <span className="loading loading-spinner loading-lg"></span>
       </div>
     );
-  if (!ticket) return <p className="text-center mt-10 text-red-500">Ticket not found</p>;
+
+  if (!ticket)
+    return <p className="text-center mt-10 text-red-500">Ticket not found</p>;
 
   const isExpired = new Date(ticket.departureDateTime).getTime() < new Date().getTime();
 
-  const handleBooking = () => {
+  const handleBooking = async () => {
+    if (!user) return alert("Please login to book ticket");
     const bookingData = {
       ticketId: ticket._id,
       userEmail: user.email,
@@ -75,17 +78,19 @@ const SingleTickets = () => {
       bookingDate: new Date(),
     };
 
-    fetch(`${backendURL}/bookings`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bookingData),
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setOpenModal(false);
-        navigate("/dashboard/user/booked-tickets");
-      })
-      .catch((err) => console.error(err));
+    try {
+      const res = await fetch(`${backendURL}/bookings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingData),
+      });
+      if (!res.ok) throw new Error("Booking failed");
+      setOpenModal(false);
+      navigate("/dashboard/user/booked-tickets");
+    } catch (err) {
+      console.error(err);
+      alert("Booking failed. Try again.");
+    }
   };
 
   return (
@@ -172,42 +177,40 @@ const SingleTickets = () => {
         </div>
       </div>
 
-     {/* Booking Modal */}
-{openModal && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div className="bg-white dark:bg-[#1a1a3a] p-6 rounded-xl w-96 transition-colors duration-500">
-      <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Book Ticket</h2>
-      
-      <label className="block mb-2 text-gray-700 dark:text-gray-200 font-medium">Select Quantity</label>
-      <select
-        value={quantity}
-        onChange={(e) => setQuantity(Number(e.target.value))}
-        className="w-full border p-2 rounded mb-4 dark:bg-[#0f0f2a] dark:text-white dark:border-gray-600 transition-colors"
-      >
-        {Array.from({ length: ticket.quantity }, (_, i) => i + 1).map((num) => (
-          <option key={num} value={num}>
-            {num}
-          </option>
-        ))}
-      </select>
+      {/* Booking Modal */}
+      {openModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-[#1a1a3a] p-6 rounded-xl w-96 transition-colors duration-500">
+            <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Book Ticket</h2>
 
-      <div className="flex gap-3">
-        <button
-          onClick={handleBooking}
-          className="bg-[#FEBC00] dark:bg-[#2C9CE5] hover:bg-yellow-400 dark:hover:bg-blue-500 text-black dark:text-white px-4 py-2 rounded font-semibold"
-        >
-          Confirm
-        </button>
-        <button
-          onClick={() => setOpenModal(false)}
-          className="bg-gray-300 dark:bg-gray-600 px-4 py-2 rounded text-black dark:text-white"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+            <label className="block mb-2 text-gray-700 dark:text-gray-200 font-medium">Select Quantity</label>
+            <select
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+              className="w-full border p-2 rounded mb-4 dark:bg-[#0f0f2a] dark:text-white dark:border-gray-600 transition-colors"
+            >
+              {Array.from({ length: ticket.quantity }, (_, i) => i + 1).map((num) => (
+                <option key={num} value={num}>{num}</option>
+              ))}
+            </select>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleBooking}
+                className="bg-[#FEBC00] dark:bg-[#2C9CE5] hover:bg-yellow-400 dark:hover:bg-blue-500 text-black dark:text-white px-4 py-2 rounded font-semibold"
+              >
+                Confirm
+              </button>
+              <button
+                onClick={() => setOpenModal(false)}
+                className="bg-gray-300 dark:bg-gray-600 px-4 py-2 rounded text-black dark:text-white"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

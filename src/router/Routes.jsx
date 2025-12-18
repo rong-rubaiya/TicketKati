@@ -32,6 +32,7 @@ import Chat from "../Pages/Chat";
 import Subscription from "../Pages/Subscription";
 import Terms from "../Pages/Terms";
 import SingleTickets from "../Pages/SingleTickets";
+import SuccessPayment from "../dashboard/userdasboard/userrouter/SuccessPayment";
 
 export const router= createBrowserRouter([
   {
@@ -61,6 +62,9 @@ export const router= createBrowserRouter([
     {
       path:'/dashboard/user/booked-tickets',
       element:<PrivateRoute><Booked/></PrivateRoute>
+    },{
+      path:"/dashboard/user/booked-tickets-success",
+      element:<SuccessPayment></SuccessPayment>
     },
   {
   path:'/dashboard/user/transactions',

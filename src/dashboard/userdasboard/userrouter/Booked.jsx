@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/AuthContext";
+import axios from "axios";
 
 const Booked = () => {
   const { user } = useContext(AuthContext);
@@ -9,40 +10,38 @@ const Booked = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const ticketsPerPage = 3;
+useEffect(() => {
+  if (!user) return;
 
-  // Fetch user bookings
-  useEffect(() => {
-    if (!user) return;
+  fetch(`http://localhost:5000/bookings`)
+    .then(res => res.json())
+    .then(data => {
+      const userBookings = data
+        .filter(b => b.userEmail === user.email)
+        .filter(b => (b.ticket?.quantity || 0) > 0); // ✅ only show positive quantity
+      setBookedTickets(userBookings);
+      setLoading(false);
+    })
+    .catch(() => setLoading(false));
+}, [user]);
 
-    fetch(`http://localhost:5000/bookings/${user.email}`)
-      .then(res => res.json())
-      .then(data => {
-        setBookedTickets(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, [user]);
-
-  // Live countdown
   useEffect(() => {
     const interval = setInterval(() => {
       const newCountdowns = {};
       bookedTickets.forEach(b => {
-        if (!b.ticket?.departureDateTime) return;
-        const now = new Date().getTime();
+        if (!b.ticket?.departureDateTime || b.status === "rejected") return;
+
+        const now = Date.now();
         const dep = new Date(b.ticket.departureDateTime).getTime();
         const diff = dep - now;
 
         if (diff <= 0) newCountdowns[b._id] = "Expired";
         else {
-          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-          const minutes = Math.floor((diff / (1000 * 60)) % 60);
-          const seconds = Math.floor((diff / 1000) % 60);
-          newCountdowns[b._id] = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+          const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+          const m = Math.floor((diff / (1000 * 60)) % 60);
+          const s = Math.floor((diff / 1000) % 60);
+          newCountdowns[b._id] = `${d}d ${h}h ${m}m ${s}s`;
         }
       });
       setCountdowns(newCountdowns);
@@ -51,48 +50,108 @@ const Booked = () => {
     return () => clearInterval(interval);
   }, [bookedTickets]);
 
-  const indexOfLastTicket = currentPage * ticketsPerPage;
-  const indexOfFirstTicket = indexOfLastTicket - ticketsPerPage;
-  const currentTickets = bookedTickets.slice(indexOfFirstTicket, indexOfLastTicket);
-  const totalPages = Math.ceil(bookedTickets.length / ticketsPerPage);
+  const handlePayment = async (b) => {
+    const now = Date.now();
+    const dep = new Date(b.ticket.departureDateTime).getTime();
+
+    if (dep <= now) return alert("Departure time passed!");
+
+    const paymentInfo = {
+      cost: (b.ticket.price || 0) * b.quantity,
+      bookingId: b._id,
+      senderEmail: b.userEmail,
+      bookingName: b.ticket.title,
+    };
+
+    const res = await axios.post(
+      "http://localhost:5000/create-checkout-session",
+      paymentInfo
+    );
+    window.location.href = res.data.url;
+  };
 
   const statusColor = (status) => {
     switch (status) {
-      case "pending": return "bg-[#FEBC00]/30 text-[#FEBC00]";
-      case "accepted": return "bg-[#2C9CE5]/30 text-[#2C9CE5]";
-      case "rejected": return "bg-red-100 text-red-600";
-      case "paid": return "bg-[#ff9900]/30 text-[#ff9900]";
-      default: return "bg-gray-100 text-gray-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-700";
+      case "accepted":
+        return "bg-[#FEBC00]/20 text-[#c58f00]";
+      case "paid":
+        return "bg-green-100 text-green-700";
+      case "rejected":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-gray-200 text-gray-700";
     }
   };
 
-  const handlePay = async (id) => {
-    await fetch(`http://localhost:5000/bookings/pay/${id}`, { method: "PATCH" });
-    setBookedTickets(prev => prev.map(b => b._id === id ? { ...b, status: "paid" } : b));
-  };
+  if (loading) return <p className="text-center mt-20">Loading...</p>;
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  const indexOfLast = currentPage * ticketsPerPage;
+  const indexOfFirst = indexOfLast - ticketsPerPage;
+  const currentTickets = bookedTickets.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(bookedTickets.length / ticketsPerPage);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6 text-center">My Booked Tickets</h1>
+    <div className=" py-10 px-6 transition-colors">
+      <h1 className="text-3xl font-bold mb-8 text-center text-[#FEBC00] dark:text-[#2C9CE5]">
+        My Booked Tickets
+      </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentTickets.map(b => (
-          <div key={b._id} className="bg-white rounded-xl shadow-md p-3 flex flex-col text-sm">
-            <img src={b.ticket?.image || "/images/placeholder.jpg"} alt={b.ticket?.title} className="rounded-lg w-full h-40 object-cover mb-3"/>
-            <h2 className="text-lg font-bold mb-1">{b.ticket?.title}</h2>
-            <p>From: <b>{b.ticket?.from}</b> → To: <b>{b.ticket?.to}</b></p>
-            <p>Departure: <b>{new Date(b.ticket?.departureDateTime).toLocaleString()}</b></p>
-            <p>Quantity: <b>{b.quantity}</b></p>
-            <p>Total Price: <b>৳ {(b.ticket?.price || 0) * b.quantity}</b></p>
-            <p>Countdown: <b>{countdowns[b._id] || "Calculating..."}</b></p>
-            <span className={`px-3 py-1 rounded-full text-sm font-semibold w-fit ${statusColor(b.status)}`}>
+          <div
+            key={b._id}
+            className="bg-white dark:bg-[#00138e]/40 backdrop-blur-lg
+                       rounded-2xl shadow-lg p-4 text-sm
+                       border border-[#FEBC00]/30 dark:border-[#2C9CE5]/30"
+          >
+            <img
+              src={b.ticket?.image}
+              alt={b.ticket?.title}
+              className="rounded-xl h-40 w-full object-cover mb-3"
+            />
+
+            <h2 className="text-lg font-bold text-gray-800 dark:text-white">
+              {b.ticket?.title}
+            </h2>
+
+            <p className="text-gray-600 dark:text-gray-200">
+              {b.ticket?.from} → {b.ticket?.to}
+            </p>
+
+            <p className="text-gray-600 dark:text-gray-300">
+              Departure: {new Date(b.ticket?.departureDateTime).toLocaleString()}
+            </p>
+
+            <p className="mt-1">
+              Quantity: <b>{b.quantity}</b>
+            </p>
+
+            <p>
+              Total: <b>৳ {(b.ticket?.price || 0) * b.quantity}</b>
+            </p>
+
+            {b.status !== "rejected" && (
+              <p className="mt-1 text-xs">
+                Countdown: <b>{countdowns[b._id]}</b>
+              </p>
+            )}
+
+            <span
+              className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold ${statusColor(
+                b.status
+              )}`}
+            >
               {b.status.toUpperCase()}
             </span>
 
             {b.status === "accepted" && (
-              <button onClick={() => handlePay(b._id)} className="mt-2 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">
+              <button
+                onClick={() => handlePayment(b)}
+                className="w-full mt-4 bg-[#FEBC00] hover:bg-[#ffdf89]
+                           text-black font-bold py-2 rounded-xl transition"
+              >
                 Pay Now
               </button>
             )}
@@ -101,12 +160,21 @@ const Booked = () => {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center items-center gap-3 mt-6">
-        <button onClick={() => setCurrentPage(prev => Math.max(prev-1,1))} className="px-3 py-1 rounded bg-[#cc810f] text-white">&#8592; Prev</button>
-        {[...Array(totalPages)].map((_, idx) => (
-          <button key={idx+1} onClick={() => setCurrentPage(idx+1)} className={`px-3 py-1 rounded ${currentPage === idx+1 ? "bg-[#ff9900] text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"}`}>{idx+1}</button>
+      <div className="flex justify-center gap-2 mt-10">
+        {[...Array(totalPages)].map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-4 py-1 rounded-full font-bold transition
+              ${
+                currentPage === i + 1
+                  ? "bg-[#FEBC00] text-black"
+                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white"
+              }`}
+          >
+            {i + 1}
+          </button>
         ))}
-        <button onClick={() => setCurrentPage(prev => Math.min(prev+1,totalPages))} className="px-3 py-1 rounded bg-[#cc810f] text-white">Next &#8594;</button>
       </div>
     </div>
   );

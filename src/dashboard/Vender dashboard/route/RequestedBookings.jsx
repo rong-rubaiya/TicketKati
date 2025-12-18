@@ -1,38 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const RequestedBookings = () => {
-  const bookings = [
-    {
-      id: 1,
-      userName: "Arafat Hossain",
-      userEmail: "arafat@gmail.com",
-      ticketTitle: "Dhaka → Chittagong",
-      quantity: 2,
-      unitPrice: 1250,
-      status: "pending",
-    },
-    {
-      id: 2,
-      userName: "Nusrat Jahan",
-      userEmail: "nusrat@gmail.com",
-      ticketTitle: "Dhaka → Sylhet",
-      quantity: 1,
-      unitPrice: 1500,
-      status: "pending",
-    },
-    {
-      id: 3,
-      userName: "Rakib Hasan",
-      userEmail: "rakib@gmail.com",
-      ticketTitle: "Dhaka → Rajshahi",
-      quantity: 3,
-      unitPrice: 1100,
-      status: "accepted",
-    },
-  ];
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch bookings from backend
+  const fetchBookings = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/bookings");
+      const data = await res.json();
+      setBookings(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
 
   const statusStyle = (status) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case "pending":
         return "bg-[#FEBC00]/30 text-[#FEBC00]";
       case "accepted":
@@ -44,6 +34,45 @@ const RequestedBookings = () => {
     }
   };
 
+  // Accept booking
+  const handleAccept = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/bookings/accept/${id}`, {
+        method: "PATCH",
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Update the booking status locally
+        setBookings((prev) =>
+          prev.map((b) => (b._id === id ? { ...b, status: "accepted" } : b))
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Reject booking
+  const handleReject = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/bookings/reject/${id}`, {
+        method: "PATCH",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBookings((prev) =>
+          prev.map((b) => (b._id === id ? { ...b, status: "rejected" } : b))
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  if (loading) {
+    return <p className="text-center text-gray-500 mt-6">Loading bookings...</p>;
+  }
+
   return (
     <div className="p-4 sm:p-6">
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
@@ -54,16 +83,16 @@ const RequestedBookings = () => {
       <div className="flex flex-col gap-4 md:hidden">
         {bookings.map((booking) => (
           <div
-            key={booking.id}
+            key={booking._id}
             className="bg-white dark:bg-[#0f0f2a] rounded-xl shadow-md p-4 border dark:border-gray-700"
           >
             <div className="flex justify-between items-start mb-2">
               <div>
                 <h2 className="font-bold text-gray-800 dark:text-white">
-                  {booking.ticketTitle}
+                  {booking.ticket?.title || "No Ticket Info"}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-300">
-                  {booking.userName} - {booking.userEmail}
+                  {booking.userEmail}
                 </p>
               </div>
               <span
@@ -80,18 +109,26 @@ const RequestedBookings = () => {
                 Quantity: <span className="font-semibold">{booking.quantity}</span>
               </p>
               <p className="text-gray-800 dark:text-white font-bold text-sm">
-                ৳ {booking.quantity * booking.unitPrice}
+                ৳ {booking.quantity * (booking.ticket?.price || 0)}
               </p>
             </div>
 
-            <div className="flex gap-2 mt-3">
-              <button className="flex-1 px-3 py-2 rounded-md bg-[#2C9CE5] text-white text-sm font-semibold hover:bg-[#2486c7] transition">
-                Accept
-              </button>
-              <button className="flex-1 px-3 py-2 rounded-md bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition">
-                Reject
-              </button>
-            </div>
+            {booking.status.toLowerCase() === "pending" && (
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={() => handleAccept(booking._id)}
+                  className="flex-1 px-3 py-2 rounded-md bg-[#2C9CE5] text-white text-sm font-semibold hover:bg-[#2486c7] transition"
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => handleReject(booking._id)}
+                  className="flex-1 px-3 py-2 rounded-md bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition"
+                >
+                  Reject
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -113,47 +150,37 @@ const RequestedBookings = () => {
           <tbody>
             {bookings.map((booking) => (
               <tr
-                key={booking.id}
+                key={booking._id}
                 className="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#12123a]"
               >
-                <td className="px-4 py-3">
-                  <p className="font-semibold text-gray-800 dark:text-white">
-                    {booking.userName}
-                  </p>
-                  <p className="text-xs text-gray-500">{booking.userEmail}</p>
-                </td>
-
-                <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
-                  {booking.ticketTitle}
-                </td>
-
-                <td className="px-4 py-3 text-center font-semibold">
-                  {booking.quantity}
-                </td>
-
+                <td className="px-4 py-3">{booking.userEmail}</td>
+                <td className="px-4 py-3">{booking.ticket?.title || "No Ticket Info"}</td>
+                <td className="px-4 py-3 text-center">{booking.quantity}</td>
                 <td className="px-4 py-3 text-center font-bold">
-                  ৳ {booking.unitPrice * booking.quantity}
+                  ৳ {booking.quantity * (booking.ticket?.price || 0)}
                 </td>
-
                 <td className="px-4 py-3 text-center">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${statusStyle(
-                      booking.status
-                    )}`}
-                  >
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusStyle(booking.status)}`}>
                     {booking.status.toUpperCase()}
                   </span>
                 </td>
-
                 <td className="px-4 py-3 text-center">
-                  <div className="flex justify-center gap-2">
-                    <button className="px-3 py-1 rounded-md bg-[#2C9CE5] text-white text-sm font-semibold hover:bg-[#2486c7] transition">
-                      Accept
-                    </button>
-                    <button className="px-3 py-1 rounded-md bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition">
-                      Reject
-                    </button>
-                  </div>
+                  {booking.status.toLowerCase() === "pending" && (
+                    <div className="flex justify-center gap-2">
+                      <button
+                        onClick={() => handleAccept(booking._id)}
+                        className="px-3 py-1 rounded-md bg-[#2C9CE5] text-white text-sm font-semibold hover:bg-[#2486c7] transition"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleReject(booking._id)}
+                        className="px-3 py-1 rounded-md bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}

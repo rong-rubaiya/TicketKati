@@ -1,59 +1,29 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../../context/AuthContext";
 
 const MyAddedTickets = () => {
-  const tickets = [
-    {
-      id: 1,
-      title: "Dhaka → Chittagong",
-      image:
-        "https://images.pexels.com/photos/386009/pexels-photo-386009.jpeg",
-      from: "Dhaka",
-      to: "Chittagong",
-      departure: "2025-12-15 08:30 AM",
-      price: 1250,
-      quantity: 40,
-      status: "pending",
-    },
-    {
-      id: 2,
-      title: "Dhaka → Sylhet",
-      image:
-        "https://images.pexels.com/photos/21014/pexels-photo.jpg",
-      from: "Dhaka",
-      to: "Sylhet",
-      departure: "2025-12-20 10:00 AM",
-      price: 1500,
-      quantity: 25,
-      status: "approved",
-    },
-    {
-      id: 3,
-      title: "Dhaka → Rajshahi",
-      image:
-        "https://images.pexels.com/photos/462024/pexels-photo-462024.jpeg",
-      from: "Dhaka",
-      to: "Rajshahi",
-      departure: "2025-12-22 09:00 AM",
-      price: 1300,
-      quantity: 15,
-      status: "rejected",
-    },
-    {
-      id: 4,
-      title: "Dhaka → Khulna",
-      image:
-        "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
-      from: "Dhaka",
-      to: "Khulna",
-      departure: "2025-12-18 06:45 PM",
-      price: 1100,
-      quantity: 20,
-      status: "approved",
-    },
-  ];
-
+  const { user } = useContext(AuthContext);
+  const [tickets, setTickets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const ticketsPerPage = 3;
+
+  const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
+
+  useEffect(() => {
+    if (!user?.email) return;
+
+    fetch(`${backendURL}/tickets/vendor/${user.email}`)
+      .then(res => res.json())
+      .then(data => {
+        // Sort: pending first, then approved, then rejected
+        const sorted = data.sort((a, b) => {
+          const order = { pending: 1, approved: 2, rejected: 3 };
+          return (order[a.verificationStatus] || 4) - (order[b.verificationStatus] || 4);
+        });
+        setTickets(sorted);
+      })
+      .catch(err => console.error(err));
+  }, [backendURL, user.email]);
 
   const indexOfLast = currentPage * ticketsPerPage;
   const indexOfFirst = indexOfLast - ticketsPerPage;
@@ -81,49 +51,41 @@ const MyAddedTickets = () => {
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {currentTickets.map((ticket) => (
+        {currentTickets.map(ticket => (
           <div
-            key={ticket.id}
+            key={ticket._id}
             className="bg-white dark:bg-[#0f0f2a] border dark:border-gray-700 rounded-xl shadow-md hover:shadow-lg transition p-4 flex flex-col"
           >
             <img
-              src={ticket.image}
+              src={ticket.image || "/images/placeholder.jpg"}
               alt={ticket.title}
               className="h-40 w-full object-cover rounded-lg mb-3"
             />
-
-            <h2 className="text-lg font-bold text-gray-800 dark:text-white">
-              {ticket.title}
-            </h2>
-
+            <h2 className="text-lg font-bold text-gray-800 dark:text-white">{ticket.title}</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300">{ticket.from} → {ticket.to}</p>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              {ticket.from} → {ticket.to}
+              Departure: {new Date(ticket.departureDateTime).toLocaleString()}
             </p>
-
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Departure: {ticket.departure}
-            </p>
-
             <p className="text-sm text-gray-600 dark:text-gray-300">
               Price: ৳{ticket.price} | Qty: {ticket.quantity}
             </p>
 
-            {/* Status */}
+            {/* Status badge */}
             <span
               className={`mt-2 px-3 py-1 rounded-full text-sm font-semibold w-fit ${statusStyle(
-                ticket.status
+                ticket.verificationStatus
               )}`}
             >
-              {ticket.status.toUpperCase()}
+              {ticket.verificationStatus?.toUpperCase()}
             </span>
 
             {/* Buttons */}
             <div className="flex gap-3 mt-4">
               <button
-                disabled={ticket.status === "rejected"}
+                disabled={ticket.verificationStatus === "rejected"}
                 className={`flex-1 py-2 rounded-lg font-semibold transition
                 ${
-                  ticket.status === "rejected"
+                  ticket.verificationStatus === "rejected"
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-[#2C9CE5] text-white hover:bg-[#2486c7]"
                 }`}
@@ -132,10 +94,10 @@ const MyAddedTickets = () => {
               </button>
 
               <button
-                disabled={ticket.status === "rejected"}
+                disabled={ticket.verificationStatus === "rejected"}
                 className={`flex-1 py-2 rounded-lg font-semibold transition
                 ${
-                  ticket.status === "rejected"
+                  ticket.verificationStatus === "rejected"
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-red-500 text-white hover:bg-red-600"
                 }`}
@@ -150,7 +112,7 @@ const MyAddedTickets = () => {
       {/* Pagination */}
       <div className="flex justify-center items-center gap-3 mt-8">
         <button
-          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+          onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
           className="px-3 py-1 rounded bg-[#cc810f] text-white hover:bg-[#ff9900]"
         >
           ← Prev
@@ -161,9 +123,7 @@ const MyAddedTickets = () => {
             key={i}
             onClick={() => setCurrentPage(i + 1)}
             className={`px-3 py-1 rounded transition ${
-              currentPage === i + 1
-                ? "bg-[#ff9900] text-white"
-                : "bg-gray-200 dark:bg-gray-700"
+              currentPage === i + 1 ? "bg-[#ff9900] text-white" : "bg-gray-200 dark:bg-gray-700"
             }`}
           >
             {i + 1}
@@ -171,7 +131,7 @@ const MyAddedTickets = () => {
         ))}
 
         <button
-          onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+          onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
           className="px-3 py-1 rounded bg-[#cc810f] text-white hover:bg-[#ff9900]"
         >
           Next →
