@@ -10,13 +10,13 @@ const MyAddedTickets = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const ticketsPerPage = 3;
 
-  const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
+  
 
   // Fetch vendor tickets
   useEffect(() => {
     if (!user?.email) return;
 
-    fetch(`${backendURL}/tickets/vendor/${user.email}`)
+    fetch(`https://ticketkati.vercel.app/tickets/vendor/${user.email}`)
       .then(res => res.json())
       .then(data => {
         // Sort: pending first, then approved, then rejected
@@ -27,7 +27,7 @@ const MyAddedTickets = () => {
         setTickets(sorted);
       })
       .catch(err => console.error(err));
-  }, [backendURL, user.email]);
+  }, [ user.email]);
 
   const indexOfLast = currentPage * ticketsPerPage;
   const indexOfFirst = indexOfLast - ticketsPerPage;
@@ -69,7 +69,7 @@ const MyAddedTickets = () => {
 
   if (result.isConfirmed) {
     try {
-      const res = await fetch(`${backendURL}/tickets/${ticketId}`, {
+      const res = await fetch(`https://ticketkati.vercel.app/tickets/${ticketId}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete ticket");

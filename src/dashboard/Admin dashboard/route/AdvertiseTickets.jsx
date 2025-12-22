@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 const AdvertiseTickets = () => {
-  const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
+  
   const [tickets, setTickets] = useState([]);
 
   // Fetch approved tickets
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const res = await fetch(`${backendURL}/tickets/approved`);
+        const res = await fetch('https://ticketkati.vercel.app/tickets/approved');
         const data = await res.json();
         // Add advertised property (default false)
         const updatedData = data.map(t => ({ ...t, advertised: t.advertised || false }));
@@ -20,7 +20,7 @@ const AdvertiseTickets = () => {
     };
 
     fetchTickets();
-  }, [backendURL]);
+  }, []);
 
   // Advertise/unadvertise a ticket
   const handleAdvertise = async (ticket) => {
@@ -38,7 +38,7 @@ const AdvertiseTickets = () => {
     if (!result.isConfirmed) return;
 
     try {
-      const res = await fetch(`${backendURL}/tickets/advertise/${ticket._id}`, {
+      const res = await fetch(`https://ticketkati.vercel.app/tickets/advertise/${ticket._id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ advertised: !ticket.advertised }),
@@ -82,7 +82,7 @@ const AdvertiseTickets = () => {
     if (!result.isConfirmed) return;
 
     try {
-      const res = await fetch(`${backendURL}/tickets/${ticketId}`, { method: "DELETE" });
+      const res = await fetch(`https://ticketkati.vercel.app/tickets/${ticketId}`, { method: "DELETE" });
       const data = await res.json();
 
       if (data.success) {

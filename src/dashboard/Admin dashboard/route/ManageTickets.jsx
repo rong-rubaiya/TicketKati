@@ -5,7 +5,7 @@ const ManageTickets = () => {
   const [tickets, setTickets] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/all-tickets")
+    fetch("https://ticketkati.vercel.app/all-tickets")
       .then((res) => res.json())
       .then((data) => {
         // Only show pending tickets
@@ -40,7 +40,7 @@ const ManageTickets = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/tickets/${action}/${ticketId}`, { method: "PATCH" });
+      const res = await fetch(`https://ticketkati.vercel.app/tickets/${action}/${ticketId}`, { method: "PATCH" });
       if (!res.ok) throw new Error(`Failed to ${action} ticket`);
 
       Swal.fire(`${action.charAt(0).toUpperCase() + action.slice(1)}d!`, `Ticket has been ${action}d.`, "success");

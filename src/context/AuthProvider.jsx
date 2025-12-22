@@ -58,7 +58,7 @@ const AuthProvider = ({ children }) => {
     const res = await signInWithEmailAndPassword(auth, email, password);
 
     // Fetch role from backend
-    const roleRes = await fetch(`http://localhost:5000/user-role/${email}`);
+    const roleRes = await fetch(`https://ticketkati.vercel.app/user-role/${email}`);
     const roleData = await roleRes.json(); // { role: 'user' | 'vendor' | 'admin' }
 
     const loggedUser = {
@@ -82,7 +82,7 @@ const AuthProvider = ({ children }) => {
 
     // Fetch role from backend
     const email = res.user.email;
-    const roleRes = await fetch(`http://localhost:5000/user-role/${email}`);
+    const roleRes = await fetch(`https://ticketkati.vercel.app/user-role/${email}`);
     const roleData = await roleRes.json();
 
     const loggedUser = {
@@ -105,7 +105,7 @@ const AuthProvider = ({ children }) => {
     const res = await signInWithPopup(auth, fbProvider);
 
     const email = res.user.email;
-    const roleRes = await fetch(`http://localhost:5000/user-role/${email}`);
+    const roleRes = await fetch(`https://ticketkati.vercel.app/user-role/${email}`);
     const roleData = await roleRes.json();
 
     const loggedUser = {
@@ -150,7 +150,7 @@ const AuthProvider = ({ children }) => {
   const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
     if (currentUser) {
       try {
-        const roleRes = await fetch(`http://localhost:5000/user-role/${currentUser.email}`);
+        const roleRes = await fetch(`https://ticketkati.vercel.app/user-role/${currentUser.email}`);
         const roleData = await roleRes.json();
 
         setUser({

@@ -33,11 +33,13 @@ import Subscription from "../Pages/Subscription";
 import Terms from "../Pages/Terms";
 import SingleTickets from "../Pages/SingleTickets";
 import SuccessPayment from "../dashboard/userdasboard/userrouter/SuccessPayment";
+import Error from "../Shared/Error";
 
 export const router= createBrowserRouter([
   {
     path:'/',
     element:<Roots></Roots>,
+    errorElement:<Error></Error>,
     children:[{
       path:'/',
       index:true,
@@ -78,21 +80,21 @@ export const router= createBrowserRouter([
     },
     {
       path: "/dashboard/admin",
-      element:<AdminDashboard></AdminDashboard>,
+      element:<PrivateRoute><AdminDashboard></AdminDashboard></PrivateRoute>,
       children:[{
         path:'/dashboard/admin/profile',
-        element:<AdminProfile/>
+        element:<PrivateRoute><AdminProfile/></PrivateRoute>
       },{
         path:'/dashboard/admin/manage-tickets',
-        element:<ManageTickets/>
+        element:<PrivateRoute><ManageTickets/></PrivateRoute>
       },
     {
       path:"/dashboard/admin/manage-users",
-      element:<ManageUsers/>
+      element:<PrivateRoute><ManageUsers/></PrivateRoute>
     },
   {
     path:"/dashboard/admin/advertise-tickets",
-    element:<AdvertiseTickets/>
+    element:<PrivateRoute><AdvertiseTickets/></PrivateRoute>
   }]
 
     },
@@ -104,21 +106,21 @@ export const router= createBrowserRouter([
       </PrivateRoute>,
       children:[{
         path:'/dashboard/vendor/profile',
-        element:<VendorProfile></VendorProfile>
+        element:<PrivateRoute><VendorProfile></VendorProfile></PrivateRoute>
       },
     {
       path:'/dashboard/vendor/add-ticket',
-      element:<AddTicket></AddTicket>
+      element:<PrivateRoute><AddTicket></AddTicket></PrivateRoute>
     },{
       path:'/dashboard/vendor/my-tickets',
-      element:<MyAddedTickets/>
+      element:<PrivateRoute><MyAddedTickets/></PrivateRoute>
     },{
       path:'/dashboard/vendor/requests',
-      element:<RequestedBookings/>
+      element:<PrivateRoute><RequestedBookings/></PrivateRoute>
     },
   {
     path:'/dashboard/vendor/revenue',
-    element:<RevenueOverview/>
+    element:<PrivateRoute><RevenueOverview/></PrivateRoute>
   }]
 
     },

@@ -37,7 +37,7 @@ const Login = () => {
       await signInUser(email, password);
 
       // Fetch role from backend
-      const res = await fetch(`http://localhost:5000/user-role/${email}`);
+      const res = await fetch(`https://ticketkati.vercel.app/user-role/${email}`);
       if (!res.ok) throw new Error("Failed to fetch user role");
       const data = await res.json();
 

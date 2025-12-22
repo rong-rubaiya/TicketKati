@@ -13,7 +13,7 @@ const Booked = () => {
 useEffect(() => {
   if (!user) return;
 
-  fetch(`http://localhost:5000/bookings`)
+  fetch(`https://ticketkati.vercel.app/bookings`)
     .then(res => res.json())
     .then(data => {
       const userBookings = data
@@ -64,7 +64,7 @@ useEffect(() => {
     };
 
     const res = await axios.post(
-      "http://localhost:5000/create-checkout-session",
+      "https://ticketkati.vercel.app/create-checkout-session",
       paymentInfo
     );
     window.location.href = res.data.url;

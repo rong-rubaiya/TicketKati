@@ -7,7 +7,7 @@ const RequestedBookings = () => {
   // Fetch bookings from backend
   const fetchBookings = async () => {
     try {
-      const res = await fetch("http://localhost:5000/bookings");
+      const res = await fetch("https://ticketkati.vercel.app/bookings");
       const data = await res.json();
       setBookings(data);
     } catch (err) {
@@ -37,7 +37,7 @@ const RequestedBookings = () => {
   // Accept booking
   const handleAccept = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/bookings/accept/${id}`, {
+      const res = await fetch(`https://ticketkati.vercel.app/bookings/accept/${id}`, {
         method: "PATCH",
       });
       const data = await res.json();
@@ -55,7 +55,7 @@ const RequestedBookings = () => {
   // Reject booking
   const handleReject = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/bookings/reject/${id}`, {
+      const res = await fetch(`https://ticketkati.vercel.app/bookings/reject/${id}`, {
         method: "PATCH",
       });
       const data = await res.json();

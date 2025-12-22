@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
-  const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
+  
 
   useEffect(() => {
     fetchUsers();
@@ -12,7 +12,7 @@ const ManageUsers = () => {
   // Fetch all users
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${backendURL}/users/all`);
+      const res = await fetch('https://ticketkati.vercel.app/users/all');
       const data = await res.json();
       setUsers(data);
     } catch (err) {
@@ -33,7 +33,7 @@ const ManageUsers = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      const res = await fetch(`${backendURL}/users/role/${id}`, {
+      const res = await fetch(`https://ticketkati.vercel.app/users/role/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role }),
@@ -64,7 +64,7 @@ const ManageUsers = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      const res = await fetch(`${backendURL}/users/fraud/${id}`, {
+      const res = await fetch(`https://ticketkati.vercel.app/users/fraud/${id}`, {
         method: "PATCH",
       });
 

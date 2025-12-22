@@ -6,7 +6,7 @@ const SingleTickets = () => {
   const { user } = useContext(AuthContext);
   const { id } = useParams();
   const navigate = useNavigate();
-  const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
+ 
 
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ const SingleTickets = () => {
   useEffect(() => {
     const fetchTicket = async () => {
       try {
-        const res = await fetch(`${backendURL}/ticket/${id}`);
+        const res = await fetch(`https://ticketkati.vercel.app/ticket/${id}`);
         if (!res.ok) throw new Error("Ticket not found");
         const data = await res.json();
         setTicket(data.result || data); // support both structures
@@ -29,7 +29,7 @@ const SingleTickets = () => {
       }
     };
     fetchTicket();
-  }, [backendURL, id]);
+  }, [ id]);
 
   // Countdown timer
   useEffect(() => {
@@ -79,7 +79,7 @@ const SingleTickets = () => {
     };
 
     try {
-      const res = await fetch(`${backendURL}/bookings`, {
+      const res = await fetch(`https://ticketkati.vercel.app/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bookingData),

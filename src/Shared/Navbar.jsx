@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router";
 import { FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { AuthContext } from "../context/AuthContext";
+import logo from "../../src/assets/logo-1.png"
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,7 +60,10 @@ const Navbar = () => {
       <div className="w-11/12 mx-auto flex items-center justify-between py-2 relative">
         {/* Logo */}
         <div className="font-bold text-xl tracking-wider cursor-pointer text-[#ff9900] dark:text-[#2C9CE5] flex  gap-6">
+         <div className="flex gap-3">
+          <Link to={"/"}> <img className="w-10 h-10" src={logo} alt="" /></Link>
           <h1>TicketKati</h1>
+         </div>
           {currentUser?(<img 
     src={currentUser.photoURL || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6Qv5s5REahX2Vcj11jPnU1ibiEUfTc-VMAQ&s"}
     alt={currentUser.displayName || "User"}

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link} from "react-router";
 import { motion } from "framer-motion";
 
 const LatestTickets = () => {
-  const navigate = useNavigate();
+  
   const [tickets, setTickets] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/all-tickets") // backend endpoint
+    fetch("https://ticketkati.vercel.app/all-tickets") // backend endpoint
       .then(res => res.json())
       .then(data => {
         
@@ -36,7 +36,7 @@ const LatestTickets = () => {
             key={ticket._id}
             className="bg-white dark:bg-[#0b0b1f] rounded-xl shadow-md overflow-hidden cursor-pointer"
             whileHover={{ scale: 1.05 }}
-            onClick={() => navigate(`/tickets/${ticket._id}`)}
+            
           >
             <motion.div className="h-40 overflow-hidden rounded-t-xl">
               <motion.img

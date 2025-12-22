@@ -4,13 +4,13 @@ import { useNavigate } from "react-router";
 
 const Advertise = () => {
   const [tickets, setTickets] = useState([]);
-  const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
+  
   const navigate=useNavigate()
 
   useEffect(() => {
     const fetchAdvertisements = async () => {
       try {
-        const res = await fetch(`${backendURL}/advertisements`);
+        const res = await fetch("https://ticketkati.vercel.app/advertisements");
         const data = await res.json();
         setTickets(data);
       } catch (err) {
@@ -19,7 +19,7 @@ const Advertise = () => {
     };
 
     fetchAdvertisements();
-  }, [backendURL]);
+  }, []);
 
   const handleBookNow = (ticket) => {
     // Navigate to a booking page and pass ticket data

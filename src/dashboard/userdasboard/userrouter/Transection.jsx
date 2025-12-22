@@ -13,7 +13,7 @@ const Transection = () => {
     const fetchTransactions = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/transactions/${user.email}`
+          `https://ticketkati.vercel.app/transactions/${user.email}`
         );
         const data = await res.json();
         setTransactions(data);

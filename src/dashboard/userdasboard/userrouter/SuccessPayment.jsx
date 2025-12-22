@@ -6,7 +6,7 @@ const SuccessPayment = () => {
     const sessionId = params.get("session_id");
 
     if (sessionId) {
-      fetch(`http://localhost:5000/payment-success?session_id=${sessionId}`, {
+      fetch(`https://ticketkati.vercel.app/payment-success?session_id=${sessionId}`, {
         method: "PATCH",
       });
     }

@@ -72,14 +72,14 @@ const AddTicket = () => {
       let res;
       if (ticketToEdit) {
         // Update existing ticket
-        res = await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/tickets/${ticketToEdit._id}`, {
+        res = await fetch(`https://ticketkati.vercel.app/tickets/${ticketToEdit._id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(ticketData),
         });
       } else {
         // Add new ticket
-        res = await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/tickets`, {
+        res = await fetch(`https://ticketkati.vercel.app/tickets`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(ticketData),

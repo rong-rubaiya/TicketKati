@@ -10,11 +10,11 @@ const AllTickets = () => {
   const [search, setSearch] = useState("");
   const [transportFilter, setTransportFilter] = useState("all");
 
-  const backendURL = import.meta.env.VITE_APP_BACKEND_URL;
+  
 
   // Fetch all tickets from backend
   useEffect(() => {
-    fetch(`${backendURL}/all-tickets`)
+    fetch(`https://ticketkati.vercel.app/all-tickets`)
       .then((res) => res.json())
       .then((data) => {
         // Filter only approved tickets
@@ -27,7 +27,7 @@ const AllTickets = () => {
         console.error("Fetch error:", err);
         setLoading(false);
       });
-  }, [backendURL]);
+  }, []);
 
   // Filter tickets by search or transport
   useEffect(() => {
