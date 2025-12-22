@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
+import Swal from "sweetalert2";
 
 const SingleTickets = () => {
   const { user } = useContext(AuthContext);
@@ -69,7 +70,15 @@ const SingleTickets = () => {
   const isExpired = new Date(ticket.departureDateTime).getTime() < new Date().getTime();
 
   const handleBooking = async () => {
-    if (!user) return alert("Please login to book ticket");
+    if (!user) {
+  return Swal.fire({
+    icon: "warning",
+    title: "Login Required",
+    text: "Please login to book ticket",
+    confirmButtonColor: "#3b82f6",
+  });
+}
+
     const bookingData = {
       ticketId: ticket._id,
       userEmail: user.email,

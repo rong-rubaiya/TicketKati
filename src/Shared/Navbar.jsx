@@ -11,6 +11,10 @@ const Navbar = () => {
 
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
+ 
+
+const [dropdownOpen, setDropdownOpen] = useState(false);
+
 
   const links = [
     { path: "/", label: "Home" },
@@ -126,51 +130,71 @@ const Navbar = () => {
 
         {/* Login / Dashboard */}
         {/* Login / Dashboard */}
-<div>
-  {currentUser ? (
-    <div className="flex items-center gap-2">
-      {/* User Name */}
-      <div className="hidden sm:flex items-center gap-3 px-4   ">
-  {/* User Avatar */}
-  <img 
-    src={currentUser.photoURL || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6Qv5s5REahX2Vcj11jPnU1ibiEUfTc-VMAQ&s"}
-    alt={currentUser.displayName || "User"}
-    className="w-10 h-10 rounded-full border-2 object-cover border-[#FEBC00] dark:border-[#2C9CE5]"
-  />
+{currentUser ? (
+  <div className="flex items-center gap-2 relative">
+    {/* User Name + Avatar */}
+    <div
+      className="hidden sm:flex items-center gap-3 px-4 cursor-pointer"
+      onClick={() => setDropdownOpen(!dropdownOpen)}
+    >
+      {/* User Avatar */}
+      <img 
+        src={currentUser.photoURL || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6Qv5s5REahX2Vcj11jPnU1ibiEUfTc-VMAQ&s"}
+        alt={currentUser.displayName || "User"}
+        className="w-10 h-10 rounded-full border-2 object-cover border-[#FEBC00] dark:border-[#2C9CE5]"
+      />
 
-  {/* User Name / Email */}
-  <div className="flex flex-col">
-    <span className="font-semibold  text-gray-900 dark:text-gray-100">
-      {currentUser.displayName || "Anonymous"}
-    </span>
-    <span className="text-sm text-gray-500  dark:text-gray-300 truncate">
-      {currentUser.email}
-    </span>
-  </div>
-</div>
-
-
-      <button
-        onClick={goToDashboard}
-        className="bg-[#FEBC00] py-1 px-5 rounded-2xl font-bold text-black cursor-pointer hover:bg-[#ffdf89] transition-all duration-300"
-      >
-        Dashboard
-      </button>
-      <button
-        onClick={handleLogout}
-        className="bg-red-500 py-1 px-5 rounded-2xl font-bold text-white cursor-pointer hover:bg-red-600 transition-all duration-300"
-      >
-        Logout
-      </button>
+      {/* User Name / Email */}
+      <div className="flex flex-col">
+        <span className="font-semibold text-gray-900 dark:text-gray-100">
+          {currentUser.displayName || "Anonymous"}
+        </span>
+        <span className="text-sm text-gray-500 dark:text-gray-300 truncate">
+          {currentUser.email}
+        </span>
+      </div>
     </div>
-  ) : (
-    <Link to={"/login"}>
-      <button className="bg-[#FEBC00] py-1 px-5 rounded-2xl font-bold text-black cursor-pointer hover:bg-[#ffdf89] transition-all duration-300">
-        Login/Register
-      </button>
-    </Link>
-  )}
-</div>
+
+    {/* Dropdown menu */}
+    {dropdownOpen && (
+      <div className="absolute left-10 top-full mt-2 w-44 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden z-50">
+        <button
+          onClick={goToDashboard}
+          className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        >
+          My Profile
+        </button>
+        <button
+          onClick={handleLogout}
+          className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-red-500"
+        >
+          Logout
+        </button>
+      </div>
+    )}
+
+    {/* Dashboard + Logout buttons (optional, চাইলে রাখতে পারো) */}
+    <button
+      onClick={goToDashboard}
+      className="bg-[#FEBC00] py-1 px-5 rounded-2xl font-bold text-black cursor-pointer hover:bg-[#ffdf89] transition-all duration-300"
+    >
+      Dashboard
+    </button>
+    <button
+      onClick={handleLogout}
+      className="bg-red-500 py-1 px-5 rounded-2xl font-bold text-white cursor-pointer hover:bg-red-600 transition-all duration-300"
+    >
+      Logout
+    </button>
+  </div>
+) : (
+  <Link to={"/login"}>
+    <button className="bg-[#FEBC00] py-1 px-5 rounded-2xl font-bold text-black cursor-pointer hover:bg-[#ffdf89] transition-all duration-300">
+      Login/Register
+    </button>
+  </Link>
+)}
+
       </div>
 
       {/* Mobile Menu */}

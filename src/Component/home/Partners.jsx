@@ -3,8 +3,8 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const partners = [
-  "https://upload.wikimedia.org/wikipedia/commons/0/02/Starbucks_Logo.svg",
-  "https://upload.wikimedia.org/wikipedia/commons/5/53/Airbnb_Logo_Bélo.svg",
+  "https://easydigitaldownloads.com/wp-content/uploads/edd/2019/03/stripe-product-image.png",
+  "https://play-lh.googleusercontent.com/9ps_d6nGKQzfbsJfMaFR0RkdwzEdbZV53ReYCS09Eo5MV-GtVylFD-7IHcVktlnz9Mo",
   "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
   "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
 ];

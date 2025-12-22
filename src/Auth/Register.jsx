@@ -6,6 +6,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import SocialBtn from "./SocialBtn";
 import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
+import Swal from "sweetalert2";
 
 const Register = () => {
   const { createUser, updateUserProfile } = useContext(AuthContext);
@@ -20,40 +21,54 @@ const Register = () => {
     { test: /[a-z]/, label: "One lowercase letter (a–z)" },
   ];
 
-  const onSubmit = async (data) => {
-    try {
-      // Firebase registration
-      const result = await createUser(data.email, data.password);
-      await updateUserProfile(data.name, data.photo);
+ const onSubmit = async (data) => {
+  try {
+    // Firebase registration
+    const result = await createUser(data.email, data.password);
+    await updateUserProfile(data.name, data.photo);
 
-      // Save to backend
-      const res = await fetch("https://ticketkati.vercel.app/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          photo: data.photo,
-          role: data.role,
-        }),
-           
+    // Save to backend
+    const res = await fetch("https://ticketkati.vercel.app/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        photo: data.photo,
+        role: data.role,
+      }),
+    });
+
+    console.log("Selected role:", data.role);
+
+    const savedData = await res.json();
+
+    if (savedData.success) {
+      await Swal.fire({
+        icon: "success",
+        title: "Registration Successful!",
+        text: "Your account has been created successfully.",
+        confirmButtonColor: "#22c55e",
       });
-
-      console.log("Selected role:", data.role);
-
-      const savedData = await res.json();
-      if (savedData.success) {
-        alert("Registration successful!");
-        navigate("/");
-      } else {
-        alert(savedData.error || "Backend error");
-      }
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
+      navigate("/");
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Registration Failed",
+        text: savedData.error || "Backend error",
+        confirmButtonColor: "#ef4444",
+      });
     }
- 
-  };
+  } catch (err) {
+    console.error(err);
+    Swal.fire({
+      icon: "error",
+      title: "Something went wrong",
+      text: err.message,
+      confirmButtonColor: "#ef4444",
+    });
+  }
+};
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FEBC00]/20 to-[#2C9CE5]/20 relative overflow-hidden pt-28 pb-10 px-6">

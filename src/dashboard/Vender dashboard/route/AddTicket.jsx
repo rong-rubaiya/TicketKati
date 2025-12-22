@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import { useLocation, useNavigate } from "react-router";
+import Swal from "sweetalert2";
 
 const AddTicket = () => {
   const { user } = useContext(AuthContext);
@@ -47,8 +48,13 @@ const AddTicket = () => {
     const form = e.target;
 
     if (!imageUrl) {
-      return alert("Please upload an image first!");
-    }
+  return Swal.fire({
+    icon: "warning",
+    title: "Image Required",
+    text: "Please upload an image first!",
+    confirmButtonColor: "#f59e0b",
+  });
+}
 
     const ticketData = {
       title: form.title.value,

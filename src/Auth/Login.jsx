@@ -5,6 +5,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import SocialBtn from "./SocialBtn";
 import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const { signInUser, resetPassword,user, setUser } = useContext(AuthContext);
@@ -48,21 +49,37 @@ const Login = () => {
 
     } catch (error) {
       console.error(error);
-      alert(error.message);
+      // alert(error.message);
     }
    }
   };
 
-  const handleForgotPassword = async () => {
-    if (!email) return alert("Please enter your email first!");
-    try {
-      await resetPassword(email);
-      alert("Password reset email sent!");
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  };
+ const handleForgotPassword = async () => {
+  if (!email) {
+    return Swal.fire({
+      icon: "warning",
+      title: "Email Required",
+      text: "Please enter your email first!",
+    });
+  }
+
+  try {
+    await resetPassword(email);
+    Swal.fire({
+      icon: "success",
+      title: "Success!",
+      text: "Password reset email sent!",
+    });
+  } catch (error) {
+    console.error(error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: error.message || "Something went wrong!",
+    });
+  }
+};
+
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FEBC00]/20 to-[#2C9CE5]/20 relative overflow-hidden pt-28 pb-10 px-6">

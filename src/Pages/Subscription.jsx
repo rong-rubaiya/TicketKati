@@ -1,15 +1,31 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaEnvelope } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const Subscription = () => {
   const [email, setEmail] = useState("");
 
-  const handleSubscribe = () => {
-    if (!email) return alert("Please enter your email!");
-    alert(`Subscribed with: ${email}`);
-    setEmail("");
-  };
+ const handleSubscribe = () => {
+  if (!email) {
+    return Swal.fire({
+      icon: "warning",
+      title: "Email Required",
+      text: "Please enter your email!",
+      confirmButtonColor: "#f59e0b",
+    });
+  }
+
+  Swal.fire({
+    icon: "success",
+    title: "Subscribed!",
+    text: `Subscribed with: ${email}`,
+    confirmButtonColor: "#22c55e",
+  });
+
+  setEmail("");
+};
+
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-r from-[#FEBC00]/20 to-[#FF9900]/20 dark:from-[#2C9CE5]/20 dark:to-[#1A1F40]/20 py-28 px-4">

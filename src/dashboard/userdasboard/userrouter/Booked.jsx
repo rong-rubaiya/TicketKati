@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Booked = () => {
   const { user } = useContext(AuthContext);
@@ -54,7 +55,14 @@ useEffect(() => {
     const now = Date.now();
     const dep = new Date(b.ticket.departureDateTime).getTime();
 
-    if (dep <= now) return alert("Departure time passed!");
+    if (dep <= now) {
+  return Swal.fire({
+    icon: "warning",
+    title: "Invalid Time",
+    text: "Departure time has already passed!",
+    confirmButtonColor: "#f59e0b",
+  });
+}
 
     const paymentInfo = {
       cost: (b.ticket.price || 0) * b.quantity,
