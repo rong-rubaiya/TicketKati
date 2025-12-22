@@ -36,7 +36,10 @@ const Register = () => {
           photo: data.photo,
           role: data.role,
         }),
+           
       });
+
+      console.log("Selected role:", data.role);
 
       const savedData = await res.json();
       if (savedData.success) {
@@ -49,6 +52,7 @@ const Register = () => {
       console.error(err);
       alert(err.message);
     }
+ 
   };
 
   return (

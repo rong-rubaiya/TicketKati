@@ -10,12 +10,11 @@ const LatestTickets = () => {
     fetch("http://localhost:5000/all-tickets") // backend endpoint
       .then(res => res.json())
       .then(data => {
-        // createdAt অনুযায়ী descending sort
+        
         const sortedTickets = data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
 
-        // শুধু ৮টা latest
         setTickets(sortedTickets.slice(0, 8));
       })
       .catch(err => console.error(err));
